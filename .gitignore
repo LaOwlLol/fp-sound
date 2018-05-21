@@ -1,8 +1,12 @@
 .gradle
-/build/
 
 #but inclide the libs folder of build. yeah?
-!build/libs/fp-sound.jar
+#!build/libs/fp-sound.jar
+
+build/classes
+build/reports
+build/test-results
+build/tmp
 
 # Ignore Gradle GUI config
 gradle-app.setting
