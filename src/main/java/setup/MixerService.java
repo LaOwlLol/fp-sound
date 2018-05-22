@@ -1,19 +1,19 @@
 package setup;
 
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class MixerService {
 
-    private static final String MIXERINFO_DELIM = " ";
+    private static final String INFO_DELIMITER = " - ";
 
     public static Stream<String> ListMixers() {
-        return Arrays.stream(AudioSystem.getMixerInfo()).map( mixer -> {
-            return new StringBuilder().append(mixer.getName()).append(MIXERINFO_DELIM)
-                  .append(mixer.getVersion()).append(MIXERINFO_DELIM)
-                  .append(mixer.getDescription()).toString();
-        } );
+        return Arrays.stream(AudioSystem.getMixerInfo()).map( mixer ->
+              mixer.getName() + INFO_DELIMITER +
+              mixer.getVersion() + INFO_DELIMITER +
+              mixer.getDescription());
     }
 
 }
