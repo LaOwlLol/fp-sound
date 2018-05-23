@@ -54,7 +54,7 @@ public class MixerService {
     public static Optional<Port> LineOutPort() {
         if (AudioSystem.isLineSupported(Port.Info.LINE_OUT)) {
             try {
-                return Optional.ofNullable((Port) AudioSystem.getLine(Port.Info.SPEAKER));
+                return Optional.ofNullable((Port) AudioSystem.getLine(Port.Info.LINE_OUT));
             }
             catch (LineUnavailableException e) {
                 System.err.println("Faux Pas Sound Engine - No Line Out Port Available");
