@@ -1,35 +1,56 @@
 package setup;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.junit.Assert.*;
-
 public class MixerServiceTest {
 
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
-    @Before
-    public void setUpStreams() {
+    @Test public void testSystemMixers() {
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
-    }
 
-    @After
-    public void restoreStreams() {
+        MixerService.MixerDetails(MixerService.SystemMixers()).forEach(System.out::println);
+        assert(!outContent.toString().isEmpty());
+        assert(errContent.toString().isEmpty());
+
         System.setOut(System.out);
         System.setErr(System.err);
     }
 
-    @Test public void testListMixer() {
-        MixerService.ListMixers().forEach(System.out::println);
+    @Test public void testAppropriateMixers() {
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+
+        MixerService.MixerDetails(MixerService.AppropriateMixers()).forEach(System.out::println);
         assert(!outContent.toString().isEmpty());
         assert(errContent.toString().isEmpty());
+
+        System.setOut(System.out);
+        System.setErr(System.err);
+    }
+
+    @Test public void testSpeakerPort() {
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+
+        MixerService.SpeakerPort().ifPresent(line -> {
+            System.out.println(MixerService.LineDetails(line));
+            assert(!outContent.toString().isEmpty());
+            assert(errContent.toString().isEmpty());
+            }
+        );
+
+        System.setOut(System.out);
+        System.setErr(System.err);
     }
 
 }

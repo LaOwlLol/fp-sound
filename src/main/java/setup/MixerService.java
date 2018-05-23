@@ -2,6 +2,7 @@ package setup;
 
 import javax.sound.sampled.*;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class MixerService {
@@ -16,22 +17,42 @@ public class MixerService {
           false //little-endian
     );
 
-    private static final String INFO_BREAK = ": ";
+    private static final String INFO_LABEL = ": ";
     private static final String INFO_DELIMITER = " - ";
 
-    public static Stream<String> ListMixers() {
-         return Arrays.stream(AudioSystem.getMixerInfo()).map(
-               mixerInfo -> {
-                   Mixer mixer = AudioSystem.getMixer(mixerInfo);
+    public static Stream<String> MixerDetails(Stream<Mixer> mixers) {
+        return mixers.map( mixer -> "Name" + INFO_LABEL + mixer.getMixerInfo().getName() + INFO_DELIMITER +
+              "Ver" + INFO_LABEL + mixer.getMixerInfo().getVersion() + INFO_DELIMITER +
+              "Desc" + INFO_LABEL + mixer.getMixerInfo().getDescription());
+    }
 
-                   return mixerInfo.getName() + INFO_DELIMITER +
-                         "Supports SourceDataLines" + INFO_BREAK +
-                         mixer.isLineSupported(new DataLine.Info(SourceDataLine.class, FORMAT)) + INFO_DELIMITER +
-                         "Max supported lines" + INFO_BREAK +
-                         mixer.getMaxLines(new DataLine.Info(SourceDataLine.class, FORMAT)) + INFO_DELIMITER;
-               }
-         );
+    public static String LineDetails(Line line) {
+        return line.getLineInfo().toString();
+    }
 
+    public static Stream<Mixer> AppropriateMixers() {
+        return SystemMixers().filter(mixer ->
+              mixer.isLineSupported(new DataLine.Info(SourceDataLine.class, FORMAT))
+        );
+    }
+
+    public static Optional<Port> SpeakerPort() {
+        if (AudioSystem.isLineSupported(Port.Info.SPEAKER)) {
+            try {
+                return Optional.ofNullable((Port) AudioSystem.getLine(Port.Info.SPEAKER));
+            }
+            catch (LineUnavailableException e) {
+                System.err.println("Faux Pas Sound Engine - No Speaker Port Available");
+                return Optional.empty();
+            }
+        }
+
+        System.err.println("Faux Pas Sound Engine - No Speaker Port Supported");
+        return Optional.empty();
+    }
+
+    public static Stream<Mixer> SystemMixers() {
+        return Arrays.stream(AudioSystem.getMixerInfo()).map(mixerInfo -> AudioSystem.getMixer(mixerInfo));
     }
 
 }
