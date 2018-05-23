@@ -53,4 +53,21 @@ public class MixerServiceTest {
         System.setErr(System.err);
     }
 
+    @Test public void testLineOutPort() {
+        final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+
+        MixerService.LineOutPort().ifPresent(line -> {
+                  System.out.println(MixerService.LineDetails(line));
+                  assert(!outContent.toString().isEmpty());
+                  assert(errContent.toString().isEmpty());
+              }
+        );
+
+        System.setOut(System.out);
+        System.setErr(System.err);
+    }
+
 }

@@ -51,6 +51,21 @@ public class MixerService {
         return Optional.empty();
     }
 
+    public static Optional<Port> LineOutPort() {
+        if (AudioSystem.isLineSupported(Port.Info.LINE_OUT)) {
+            try {
+                return Optional.ofNullable((Port) AudioSystem.getLine(Port.Info.SPEAKER));
+            }
+            catch (LineUnavailableException e) {
+                System.err.println("Faux Pas Sound Engine - No Line Out Port Available");
+                return Optional.empty();
+            }
+        }
+
+        System.err.println("Faux Pas Sound Engine - No Line Out Port Supported");
+        return Optional.empty();
+    }
+
     public static Stream<Mixer> SystemMixers() {
         return Arrays.stream(AudioSystem.getMixerInfo()).map(mixerInfo -> AudioSystem.getMixer(mixerInfo));
     }
