@@ -1,6 +1,12 @@
 package setup;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 
 public class FormatService {
 
@@ -24,4 +30,19 @@ public class FormatService {
           false //little-endian
     );
 
+    public static Optional<AudioInputStream> AudioInputStream(File soundFile) {
+
+        try {
+            return Optional.ofNullable(AudioSystem.getAudioInputStream(soundFile));
+        }
+        catch (UnsupportedAudioFileException e) {
+            System.err.println(ErrorMessageService.ERROR_HEADER+e.getMessage());
+            return Optional.empty();
+        }
+        catch (IOException e) {
+            System.err.println(ErrorMessageService.ERROR_HEADER+e.getMessage());
+            return Optional.empty();
+        }
+
+    }
 }
