@@ -1,26 +1,27 @@
 package engine;
 
-
-import setup.ErrorMessageService;
 import setup.FormatService;
 import setup.LineService;
 
-
-import javax.sound.sampled.*;
 import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Controller for Java Sound API
+ */
 public class FpSoundEngine {
 
-    public void playSound(File soundFile) {
-
+    /**
+     * Push audio data for a file to the AudioSystem.
+     * @param soundFile File to push to AudioSystem.
+     *  (required to be, wav, au, or aiff with appropriate AudioFormat supported by Java
+     *                  see https://docs.oracle.com/javase/tutorial/sound/converters.html for more )
+     */
+    public static void PlaySound(File soundFile) {
         FormatService.AudioInputStream(soundFile).ifPresent( audioStream ->
-            LineService.SystemSourceDataLine(audioStream).ifPresent(sourceLine ->
+            LineService.SystemSourceDataLine(audioStream.getFormat()).ifPresent(sourceLine ->
                 new AudioProcessThread(audioStream, sourceLine).start()
             )
         );
-
     }
 
 }

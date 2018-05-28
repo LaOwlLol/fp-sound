@@ -8,9 +8,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * Provides Preferred AudioFormat and AudioInputStream for an audio File.
+ */
 public class FormatService {
 
-    public static final AudioFormat FORMAT_44100khz = new AudioFormat(
+    /**
+     * Provides a default (or preferred) audio format.
+     * 44100 or 44.1kHz sampling rate
+     * 16-bit sampleSizeinBits
+     * 2 channels stereo
+     * frame size 4 bytes (16-bit, 2 channel)
+     * frame rate 44100, same as sampling rate
+     * bigEndian false
+     */
+    public static final AudioFormat PREFERRED_FORMAT = new AudioFormat(
           AudioFormat.Encoding.PCM_SIGNED, //linear signed PCM
           44100, //44.1kHz sampling rate
           16, //16-bit
@@ -20,16 +32,14 @@ public class FormatService {
           false //little-endian
     );
 
-    public static final AudioFormat FORMAT_22050khz = new AudioFormat(
-          AudioFormat.Encoding.PCM_SIGNED, //linear signed PCM
-          22050, //22.1kHz sampling rate
-          16, //16-bit
-          2, //2 channels fool
-          4, //frame size 4 bytes (16-bit, 2 channel)
-          44100, //same as sampling rate
-          false //little-endian
-    );
-
+    /**
+     * Helper Method for retrieving an audio data stream for a audio file.
+     * Used by FpSoundEngine to get a data stream to push to a audio Mixer's SourceDataLine.
+     * See: FpSoundEngine.PlaySound(File)
+     * @param soundFile Audio file to retrieve an input stream for.
+     * @return Optional AudioInputStream for the given file's data,
+     *          otherwise an empty optional (on IO or UnsupportedAudioFormat Exceptions(
+     */
     public static Optional<AudioInputStream> AudioInputStream(File soundFile) {
 
         try {

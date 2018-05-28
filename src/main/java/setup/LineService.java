@@ -5,34 +5,31 @@ import java.util.Optional;
 
 public class LineService {
 
-    private static DataLine.Info preferredLineInfo = new DataLine.Info(
-          SourceDataLine.class,
-          FormatService.FORMAT_44100khz);
-
-    public static Optional<SourceDataLine> SystemSourceDataLine() {
+    /**
+     * Helper Method for retrieving a line for the audio format of a audio data stream..
+     * Used by FpSoundEngine to get the line of an audio Mixer to push input stream data to.
+     * See: FpSoundEngine.PlaySound(File)
+     * @param inputFormat The AudioFormat to retrieve a line for.
+     * @return Optional SourceDataLine for the AudioFormat, otherwise an empty optional (on LineUnavailableException).
+     */
+    public static Optional<SourceDataLine> SystemSourceDataLine(AudioFormat inputFormat) {
         try {
-            return Optional.ofNullable((SourceDataLine)
-                  AudioSystem.getLine(preferredLineInfo));
-        }
-        catch (LineUnavailableException e) {
-            System.err.println("Faux Pas Sound Engine - No AudioSystem SourceDataLine available for preferred 44100khz");
-            return Optional.empty();
-        }
-    }
-
-    public static Optional<SourceDataLine> SystemSourceDataLine(AudioInputStream inputStream) {
-        try {
-            DataLine.Info lineInfo = new DataLine.Info( SourceDataLine.class, inputStream.getFormat());
+            DataLine.Info lineInfo = new DataLine.Info( SourceDataLine.class, inputFormat);
             return Optional.ofNullable((SourceDataLine)
                   AudioSystem.getLine(lineInfo));
         }
         catch (LineUnavailableException e) {
             System.err.println("Faux Pas Sound Engine - No AudioSystem SourceDataLine available for requested" +
-                  " AudioFormat " + inputStream.getFormat().getSampleRate() + "khz") ;
+                  " AudioFormat " + inputFormat.getSampleRate() + "khz") ;
             return Optional.empty();
         }
     }
 
+    /**
+     * Get details for a line.
+     * @param The line to get the details for.
+     * @return Line.Info as a String.
+     */
     public static String LineDetails(Line line) {
         return line.getLineInfo().toString();
     }
