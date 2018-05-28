@@ -19,16 +19,15 @@ public class LineService {
                   AudioSystem.getLine(lineInfo));
         }
         catch (LineUnavailableException e) {
-            System.err.println("Faux Pas Sound Engine - No AudioSystem SourceDataLine available for requested" +
-                  " AudioFormat " + inputFormat.getSampleRate() + "khz") ;
+            System.err.println(ErrorMessageService.ERROR_HEADER+e.getMessage());
             return Optional.empty();
         }
     }
 
     /**
      * Get details for a line.
-     * @param The line to get the details for.
-     * @return Line.Info as a String.
+     * @param line The Line to return details for.
+     * @return  Line.Info as a String.
      */
     public static String LineDetails(Line line) {
         return line.getLineInfo().toString();

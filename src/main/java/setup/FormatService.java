@@ -45,11 +45,7 @@ public class FormatService {
         try {
             return Optional.ofNullable(AudioSystem.getAudioInputStream(soundFile));
         }
-        catch (UnsupportedAudioFileException e) {
-            System.err.println(ErrorMessageService.ERROR_HEADER+e.getMessage());
-            return Optional.empty();
-        }
-        catch (IOException e) {
+        catch (UnsupportedAudioFileException | IOException e) {
             System.err.println(ErrorMessageService.ERROR_HEADER+e.getMessage());
             return Optional.empty();
         }

@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.text.Normalizer;
 
 public class LineServiceTest {
     @Test public void testSystemSourceDataLine() {

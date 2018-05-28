@@ -38,7 +38,7 @@ public class MixerService {
      * @return A stream of Mixers.
      */
     public static Stream<Mixer> SystemMixers() {
-        return Arrays.stream(AudioSystem.getMixerInfo()).map(mixerInfo -> AudioSystem.getMixer(mixerInfo));
+        return Arrays.stream(AudioSystem.getMixerInfo()).map(AudioSystem::getMixer);
     }
 
 }

@@ -9,13 +9,12 @@ import java.io.IOException;
 
 /**
  * A thread for reading data from an AudioInputStream while writing
- * the data to a SouceDataLine of an audio mixer.
+ * the data to a SourceDataLine of an audio mixer.
  */
-public class AudioProcessThread extends Thread {
+class AudioProcessThread extends Thread {
 
-    private final int BUFFER_SIZE = 128000;
-    private AudioInputStream audioStream;
-    private SourceDataLine sourceLine;
+    private final AudioInputStream audioStream;
+    private final SourceDataLine sourceLine;
 
     /**
      *
@@ -45,6 +44,7 @@ public class AudioProcessThread extends Thread {
         sourceLine.start();
 
         int nBytesRead = 0;
+        int BUFFER_SIZE = 128000;
         byte[] abData = new byte[BUFFER_SIZE];
         while (nBytesRead != -1) {
             try {
