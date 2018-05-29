@@ -9,9 +9,15 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Provides Preferred AudioFormat and AudioInputStream for an audio File.
+ * Provides Preferred AudioFormat and AudioInputStream for an audio File, and acceptable audio file extentions.
  */
 public class FormatService {
+
+    public static final String WAV_EXTENSION = ".wav";
+    public static final String WAVE_EXTENSION = ".wave";
+    public static final String AU_EXTENSION = ".au";
+    public static final String AIF_EXTENSION = ".aif";
+    public static final String AIFF_EXTENSION = ".aiff";
 
     /**
      * Provides a default (or preferred) audio format.
