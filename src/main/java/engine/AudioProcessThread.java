@@ -11,7 +11,7 @@ import java.io.IOException;
  * A thread for reading data from an AudioInputStream while writing
  * the data to a SourceDataLine of an audio mixer.
  */
-class AudioProcessThread extends Thread {
+public class AudioProcessThread extends Thread {
 
     private final AudioInputStream audioStream;
     private final SourceDataLine sourceLine;
