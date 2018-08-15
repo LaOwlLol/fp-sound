@@ -1,11 +1,40 @@
 # fp-sound - A simple general purpose sound library for Java.
 
-No need to construct an object.  Play audio files with global accessible FpSoundEngine.PlaySound(File) method.
-Note you must provide your own test audio file.  Java Sampled API supports formats listed below.
+This is a 'bare bones' audio library for basic audio play back.  This version of the API a prioritizes minimal code to play audio for those who just need to play audio.
+Supported audio formats listed below.
 
+## How to:
+
+One line play audio:
 
 ```java
 FpSoundEngine.PlaySound(Paths.get(System.getProperty("user.home"),"/fpAudio/test.wav").toFile());
+```
+
+Get an directory of audio to retrieve audio by name:
+
+```java
+AudioDirectory audioDir = new AudioDirectory(Paths.get(System.getProperty("user.home"), "/fpAudio"));
+String key = "test.wav";
+Optional<File> sound = audioDir.get(key);
+```
+
+Example of button (JavaFX) with sound.
+
+```java
+AudioDirectory audioDir = new AudioDirectory(Paths.get(System.getProperty("user.home"), "/fpAudio"));
+Button b = new Button("Test");
+b.setOnAction(new EventHandler<ActionEvent>() {
+    @Override public void handle(ActionEvent e) {
+        String key = "test.wav";
+        try {
+            FpSoundEngine.PlaySound(audioDir.get(key).orElseThrow( () -> new NoSuchFileException("test.wav")));
+        }
+        catch (NoSuchFileException ex) {
+            System.err.println("No such file test.wav");
+        }
+    }
+});
 ```
 
 A few basic diagnostic method can also be used to check the systems available audio devices (Mixers in Java).
