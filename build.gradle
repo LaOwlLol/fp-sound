@@ -35,3 +35,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
+jar {
+    from configurations.runtime.collect { zipTree(it) }
+    from sourceSets.main.output
+}
