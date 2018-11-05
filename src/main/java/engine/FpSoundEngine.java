@@ -82,4 +82,8 @@ public class FpSoundEngine {
         line.drain();
         line.close();
     }
+
+    public void shutDownEngine() {
+        this.engineQueue.cleanup();
+    }
 }
