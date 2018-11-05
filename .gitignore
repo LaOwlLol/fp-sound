@@ -1,5 +1,8 @@
 .gradle
 
+#git submodules
+fp-event-queue/
+
 #but inclide the libs folder of build. yeah?
 build/libs/
 

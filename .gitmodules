@@ -1,0 +1,3 @@
+[submodule "fp-event-queue"]
+	path = fp-event-queue
+	url = https://github.com/LaOwlLol/fp-event-queue.git

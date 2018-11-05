@@ -18,15 +18,28 @@
 
 package engine;
 
+import fauxpas.event.Event;
+import fauxpas.eventqueue.EventQueue;
+import setup.ErrorMessageService;
 import setup.FormatService;
 import setup.LineService;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Controller for Java Sound API
  */
 public class FpSoundEngine {
+
+    private EventQueue engineQueue;
+
+    public FpSoundEngine() {
+        this.engineQueue = new EventQueue();
+    }
 
     /**
      * Push audio data for a file to the AudioSystem.
@@ -34,12 +47,40 @@ public class FpSoundEngine {
      *  (required to be, wav, au, or aiff with appropriate AudioFormat supported by Java
      *                  see https://docs.oracle.com/javase/tutorial/sound/converters.html for more )
      */
-    public static void PlaySound(File soundFile) {
+    public void PlaySound(File soundFile) {
         FormatService.AudioInputStream(soundFile).ifPresent( audioStream ->
             LineService.SystemSourceDataLine(audioStream.getFormat()).ifPresent(sourceLine ->
-                new AudioProcessThread(audioStream, sourceLine).start()
+                engineQueue.enqueue( new Event<>( () -> audioStream, (audio) -> processAudioOnLine(audio, sourceLine) ) )
             )
         );
     }
 
+    private void processAudioOnLine(AudioInputStream stream, SourceDataLine line) {
+        try {
+            line.open(stream.getFormat());
+        }
+        catch (LineUnavailableException e) {
+            System.err.println(ErrorMessageService.ERROR_HEADER +e.getMessage());
+            return;
+        }
+        line.start();
+
+        int nBytesRead = 0;
+        int BUFFER_SIZE = 128000;
+        byte[] abData = new byte[BUFFER_SIZE];
+        while (nBytesRead != -1) {
+            try {
+                nBytesRead = stream.read(abData, 0, abData.length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (nBytesRead >= 0) {
+                @SuppressWarnings("unused")
+                int nBytesWritten = line.write(abData, 0, nBytesRead);
+            }
+        }
+
+        line.drain();
+        line.close();
+    }
 }

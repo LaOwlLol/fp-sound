@@ -16,3 +16,5 @@ include 'services:webservice'
 */
 
 rootProject.name = 'fp-sound'
+
+include 'fp-event-queue'
