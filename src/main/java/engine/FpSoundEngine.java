@@ -18,8 +18,8 @@
 
 package engine;
 
-import fauxpas.event.Event;
-import fauxpas.eventqueue.EventQueue;
+import fauxpas.event.ProduceConsumeEvent;
+import fauxpas.eventqueue.SharedQueuePool;
 import setup.ErrorMessageService;
 import setup.FormatService;
 import setup.LineService;
@@ -35,10 +35,10 @@ import java.io.IOException;
  */
 public class FpSoundEngine {
 
-    private EventQueue engineQueue;
+    private SharedQueuePool engineQueue;
 
     public FpSoundEngine() {
-        this.engineQueue = new EventQueue();
+        this.engineQueue = new SharedQueuePool(32);
     }
 
     /**
@@ -50,7 +50,7 @@ public class FpSoundEngine {
     public void PlaySound(File soundFile) {
         FormatService.AudioInputStream(soundFile).ifPresent( audioStream ->
             LineService.SystemSourceDataLine(audioStream.getFormat()).ifPresent(sourceLine ->
-                engineQueue.enqueue( new Event<>( () -> audioStream, (audio) -> processAudioOnLine(audio, sourceLine) ) )
+                engineQueue.enqueue( new ProduceConsumeEvent<AudioInputStream>( () -> audioStream, (audio) -> processAudioOnLine(audio, sourceLine) ) )
             )
         );
     }
