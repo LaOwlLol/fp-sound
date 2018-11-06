@@ -1,4 +1,4 @@
-# fp-sound version 1.0 - A 'bare bones' sound API for Java.
+# fp-sound version 0.1.0 - A 'bare bones' sound API for Java.
 
 This is a 'bare bones' audio library for audio play back.  The API prioritizes minimal code to play audio for those who 'just need to play audio'.
 The API also provides a AudioDirectory for caching and retrieving audio files (from a local file directory) by name.
@@ -6,13 +6,25 @@ Supported audio formats listed below.
 
 ## How to:
 
-- One line play sound:
+- Create a FpSoundEngine object:
 
 ```java
-FpSoundEngine.PlaySound(Paths.get(System.getProperty("user.home"),"/fpAudio/test.wav").toFile());
+FpSoundEngine soundEngine = new FpSoundEngine();
+```
+
+- Play a sound:
+
+```java
+soundEngine.PlaySound(Paths.get(System.getProperty("user.home"),"/fpAudio/test.wav").toFile());
 ```
 
 Get the File any way you need, it must be of the supported types (see below).
+
+- Shutdown the sound engine (**important** otherwise application may not terminate as expected):
+
+```java
+soundEngine.shutDownEngine();
+``` 
 
 - Cache an directory of audio to retrieve audio by name:
 
