@@ -55,7 +55,7 @@ public class FpSoundEngine {
         );
     }
 
-    private void processAudioOnLine(AudioInputStream stream, SourceDataLine line) {
+    private static void processAudioOnLine(AudioInputStream stream, SourceDataLine line) {
         try {
             line.open(stream.getFormat());
         }
@@ -83,6 +83,9 @@ public class FpSoundEngine {
         line.close();
     }
 
+    /**
+     * call cleanup on the thread queue.
+     */
     public void shutDownEngine() {
         this.engineQueue.cleanup();
     }
