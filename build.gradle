@@ -28,8 +28,6 @@ dependencies {
 
     compile project('fp-event-queue')
 
-    compile files(fileTree(dir: 'lib', includes: ['*.jar']))
-
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:23.0'
 
@@ -38,8 +36,6 @@ dependencies {
 }
 
 jar {
-    from configurations.runtime.collect { zipTree(it) }
-    from sourceSets.main.output
     manifest {
         attributes('Implementation-Title': project.name,
                 'Implementation-Version': project.version)
