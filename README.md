@@ -1,8 +1,11 @@
-# fp-sound version 0.1.0 - A 'bare bones' sound API for Java.
+# fp-sound version 0.1.1 - A 'bare bones' sound API for Java.
 
 This is a 'bare bones' audio library for audio play back.  The API prioritizes minimal code to play audio for those who 'just need to play audio'.
-The API also provides a AudioDirectory for caching and retrieving audio files (from a local file directory) by name.
-Supported audio formats listed below.
+
+This API provides three things:
+ 1. 32 track audio engine. Where each new play audio call starts on a new track. 
+ 2. AudioDirectory object that provides a key (string) value (File) interface to audio in a file system directory.
+ 3. Services for getting system sound Mixer and Line details.
 
 ## How to:
 
@@ -18,15 +21,13 @@ FpSoundEngine soundEngine = new FpSoundEngine();
 soundEngine.PlaySound(Paths.get(System.getProperty("user.home"),"/fpAudio/test.wav").toFile());
 ```
 
-Get the File any way you need, it must be of the supported types (see below).
-
 - Shutdown the sound engine (**important** otherwise application may not terminate as expected):
 
 ```java
 soundEngine.shutDownEngine();
 ``` 
 
-- Cache an directory of audio to retrieve audio by name:
+- Cache a directory of audio to retrieve audio by name:
 
 ```java
 AudioDirectory audioDir = new AudioDirectory(Paths.get(System.getProperty("user.home"), "/fpAudio"));
@@ -34,7 +35,7 @@ String key = "test.wav";
 Optional<File> sound = audioDir.get(key);
 ```
 
-All supported files with a supported file extension will be cached as a File object.  Retrieve the File from returned Optional any way you need.
+All supported files with a supported file extension will be cached as a File object, accessible with the get method by file name.
 
 - Example of a button (JavaFX) with sound.
 
