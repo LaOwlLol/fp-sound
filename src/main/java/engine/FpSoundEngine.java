@@ -20,6 +20,7 @@ package engine;
 
 import fauxpas.event.ProduceConsumeEvent;
 import fauxpas.eventqueue.SharedQueuePool;
+import fauxpas.eventqueue.SingleQueue;
 import setup.ErrorMessageService;
 import setup.FormatService;
 import setup.LineService;
@@ -29,64 +30,62 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.concurrent.BlockingDeque;
 
 /**
  * Controller for Java Sound API
  */
 public class FpSoundEngine {
 
-    private SharedQueuePool engineQueue;
+    private SharedQueuePool engine;
+    private ArrayList<Track> tracks;
 
     public FpSoundEngine() {
-        this.engineQueue = new SharedQueuePool(32);
+        this.engine = new SharedQueuePool();
     }
 
     /**
-     * Push audio data for a file to the AudioSystem.
-     * @param soundFile File to push to AudioSystem.
+     * Simple play sound.
+     * @param soundFile File to play.
      *  (required to be, wav, au, or aiff with appropriate AudioFormat supported by Java
      *                  see https://docs.oracle.com/javase/tutorial/sound/converters.html for more )
      */
     public void PlaySound(File soundFile) {
-        FormatService.AudioInputStream(soundFile).ifPresent( audioStream ->
-            LineService.SystemSourceDataLine(audioStream.getFormat()).ifPresent(sourceLine ->
-                engineQueue.enqueue( new ProduceConsumeEvent<AudioInputStream>( () -> audioStream, (audio) -> processAudioOnLine(audio, sourceLine) ) )
-            )
-        );
+        Track t = new Track();
+        t.PlaySound(soundFile);
+        tracks.add(t);
+        monitorTrack(t);
     }
 
-    private static void processAudioOnLine(AudioInputStream stream, SourceDataLine line) {
-        try {
-            line.open(stream.getFormat());
-        }
-        catch (LineUnavailableException e) {
-            System.err.println(ErrorMessageService.ERROR_HEADER +e.getMessage());
-            return;
-        }
-        line.start();
-
-        int nBytesRead = 0;
-        int BUFFER_SIZE = 128000;
-        byte[] abData = new byte[BUFFER_SIZE];
-        while (nBytesRead != -1) {
-            try {
-                nBytesRead = stream.read(abData, 0, abData.length);
-            } catch (IOException e) {
-                e.printStackTrace();
+    private void monitorTrack(Track subject) {
+        this.engine.enqueue(new Runnable() {
+            @Override
+            public void run() {
+                boolean playing = false;
+                while (playing) {
+                    playing = subject.isAlive();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        System.err.println(ErrorMessageService.ERROR_HEADER +e.getMessage());
+                    }
+                }
+                tracks.remove(subject);
+                subject.cleanup();
             }
-            if (nBytesRead >= 0) {
-                int nBytesWritten = line.write(abData, 0, nBytesRead);
-            }
-        }
-
-        line.drain();
-        line.close();
+        });
     }
 
     /**
-     * call cleanup on the thread queue.
+     *  Shut down all tracks and shut down the engine proper.
+     *
+     *  Proper use of the engine requires call this at the end of your program.
+     *  This can be done on the close method of an JavaFX Application.
      */
     public void shutDownEngine() {
-        this.engineQueue.cleanup();
+        tracks.forEach(Track::cleanup);
+        this.engine.cleanup();
     }
 }
