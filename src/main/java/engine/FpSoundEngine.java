@@ -44,6 +44,7 @@ public class FpSoundEngine {
 
     public FpSoundEngine() {
         this.engine = new SharedQueuePool();
+        this.tracks = new ArrayList<>();
     }
 
     /**
@@ -60,21 +61,18 @@ public class FpSoundEngine {
     }
 
     private void monitorTrack(Track subject) {
-        this.engine.enqueue(new Runnable() {
-            @Override
-            public void run() {
-                boolean playing = false;
-                while (playing) {
-                    playing = subject.isAlive();
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        System.err.println(ErrorMessageService.ERROR_HEADER +e.getMessage());
-                    }
+        this.engine.enqueue(() -> {
+            boolean playing = false;
+            while (playing) {
+                playing = subject.isAlive();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    System.err.println(ErrorMessageService.ERROR_HEADER +e.getMessage());
                 }
-                tracks.remove(subject);
-                subject.cleanup();
             }
+            tracks.remove(subject);
+            subject.cleanup();
         });
     }
 
